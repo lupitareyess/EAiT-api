@@ -39,7 +39,67 @@ const getUsers = async () => {
     }
   };
 
-const getProteinPoultry = async () => {
+  const getAllProteins = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE category = 'protein';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getAllVegetables = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE category = 'vegetables';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getAllFruits = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE category = 'fruits';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getAllDairy = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE category = 'dairy';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getAllSpices = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE category = 'spice_and_condiments';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getAllAlcohol = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE category = 'alcohol';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+  
+  const getProteinPoultry = async () => {
     try {
       const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'poultry';");
       return result.rows;
@@ -54,7 +114,7 @@ const getProteinBeef = async () => {
       const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'beef';");
       return result.rows;
     } catch (error) {
-      console.error("Error fetching beef ingredients:", error);
+      console.error(err);
       return [];
     }
   };
@@ -64,7 +124,7 @@ const getProteinBeef = async () => {
       const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'pork';");
       return result.rows;
     } catch (error) {
-      console.error("Error fetching beef ingredients:", error);
+      console.error(err);
       return [];
     }
   };
@@ -74,7 +134,7 @@ const getProteinBeef = async () => {
       const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'seafood';");
       return result.rows;
     } catch (error) {
-      console.error("Error fetching beef ingredients:", error);
+      console.error(err);
       return [];
     }
   };
@@ -84,71 +144,171 @@ const getProteinBeef = async () => {
       const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'vegetarian';");
       return result.rows;
     } catch (error) {
-      console.error("Error fetching beef ingredients:", error);
+      console.error(err);
       return [];
     }
   };
 
-  const getAllProteins = async () => {
+  const getVegetablesRootsBulbs = async () => {
     try {
-      const result = await client.query("SELECT * FROM ingredients WHERE category = 'protein';");
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'roots_and_bulbs';");
       return result.rows;
     } catch (error) {
-      console.error("Error fetching beef ingredients:", error);
+      console.error(err);
       return [];
     }
   };
 
-  const getAllVegetables = async () => {
+  const getVegetablesLegumes = async () => {
     try {
-      const result = await client.query("SELECT * FROM ingredients WHERE category = 'vegetables';");
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'legumes';");
       return result.rows;
     } catch (error) {
-      console.error("Error fetching beef ingredients:", error);
+      console.error(err);
       return [];
     }
   };
 
-  const getAllFruits = async () => {
+  const getVegetablesCabbages = async () => {
     try {
-      const result = await client.query("SELECT * FROM ingredients WHERE category = 'fruits';");
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'cabbages';");
       return result.rows;
     } catch (error) {
-      console.error("Error fetching beef ingredients:", error);
+      console.error(err);
       return [];
     }
   };
 
-  const getAllDairy = async () => {
+  const getVegetablesFruitVeggies = async () => {
     try {
-      const result = await client.query("SELECT * FROM ingredients WHERE category = 'dairy';");
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'fruit_vegetables';");
       return result.rows;
     } catch (error) {
-      console.error("Error fetching beef ingredients:", error);
+      console.error(err);
       return [];
     }
   };
 
-  const getAllSpices = async () => {
+  const getVegetablesCommonFruits = async () => {
     try {
-      const result = await client.query("SELECT * FROM ingredients WHERE category = 'spice_and_condiments';");
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'common_fruits';");
       return result.rows;
     } catch (error) {
-      console.error("Error fetching beef ingredients:", error);
+      console.error(err);
       return [];
     }
   };
 
-  const getAllAlcohol = async () => {
+  const getVegetablesTropicalFruits = async () => {
     try {
-      const result = await client.query("SELECT * FROM ingredients WHERE category = 'alcohol';");
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'citrus_tropical';");
       return result.rows;
     } catch (error) {
-      console.error("Error fetching beef ingredients:", error);
+      console.error(err);
       return [];
     }
   };
-  
+
+  const getDairyMilkCream = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'milk_and_cream';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getDairyButterYogurts = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'butters_and_yogurts';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getDairyCheeses = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'cheeses';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getDairyLactoseFree = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'lactose_free';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getSpiceCondimentsOils = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'oils';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getSpiceCondimentsSpices = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'spices';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getSpiceCondimentsAromatics = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'aromatics';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getSpiceCondimentsBaking = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'baking_essentials';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getSpiceCondiments = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'condiments';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getSpiceBlends = async () => {
+    try {
+      const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'spice_blends';");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
 module.exports = {
     getUsers,
     getCookingTools,
@@ -164,5 +324,21 @@ module.exports = {
     getProteinPork,
     getProteinSeafood,
     getProteinVegetarian,
+    getVegetablesRootsBulbs,
+    getVegetablesLegumes,
+    getVegetablesCabbages,
+    getVegetablesFruitVeggies,
+    getVegetablesCommonFruits,
+    getVegetablesTropicalFruits,
+    getDairyMilkCream,
+    getDairyButterYogurts,
+    getDairyCheeses,
+    getDairyLactoseFree,
+    getSpiceCondimentsOils,
+    getSpiceCondimentsSpices,
+    getSpiceCondimentsAromatics,
+    getSpiceCondimentsBaking,
+    getSpiceCondiments,
+    getSpiceBlends
   };
 
