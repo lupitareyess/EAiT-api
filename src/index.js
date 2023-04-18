@@ -3,6 +3,10 @@ const cors = require('cors');
 const morgan = require('morgan');
 const axios = require("axios");
 const app = express();
+const client = require('./db');
+
+const { getAllIngredients } = require('./db.js');
+
 
 const port = process.env.PORT || 3001;
 
@@ -47,6 +51,17 @@ app.get("/api/recipe", (req, res) => {
     max_tokens: 500,
     temperature: 0,
   };
+
+  app.get("/api/test", (req, res) => {
+    getAllIngredients()
+      .then((allIngredients) => {
+        res.json(allIngredients);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send("An error occurred");
+      });
+  });
 
   openaiClient
     .post("https://api.openai.com/v1/completions", params)
