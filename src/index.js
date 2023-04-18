@@ -5,8 +5,7 @@ const axios = require("axios");
 const app = express();
 const client = require('./db');
 
-const { getAllIngredients } = require('./db.js');
-
+const { getCookingTools } = require('./db.js');
 
 const port = process.env.PORT || 3001;
 
@@ -53,9 +52,9 @@ app.get("/api/recipe", (req, res) => {
   };
 
   app.get("/api/test", (req, res) => {
-    getAllIngredients()
-      .then((allIngredients) => {
-        res.json(allIngredients);
+    getCookingTools()
+      .then((getCookingTools) => {
+        res.json(getCookingTools);
       })
       .catch((err) => {
         console.log(err);
