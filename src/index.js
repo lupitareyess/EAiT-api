@@ -60,7 +60,8 @@ app.get("/api/recipe", (req, res) => {
       const cookingTimeStartIndex = recipeLines.findIndex((line) => line.includes("Cooking Time:"));
       const recipeIngredients = recipeLines
         .slice(ingredientsStartIndex + 1, instructionsStartIndex)
-        .filter((line) => line.trim().length > 0);
+        .filter((line) => line.trim().length > 0)
+        .map((ingredient) => ingredient.substring(2));;
       const recipeInstructions = recipeLines
         .slice(instructionsStartIndex + 1, caloriesStartIndex)
         .filter((line) => line.trim().length > 0);
