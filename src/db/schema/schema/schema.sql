@@ -7,7 +7,7 @@ CREATE TABLE users (
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
-  user_password VARCHAR(255) NOT NULL,
+  user_password VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE cooking_tools (
@@ -19,5 +19,5 @@ CREATE TABLE ingredients (
   id SERIAL PRIMARY KEY,
   category VARCHAR(255) NOT NULL,
   subcategory VARCHAR(255) NOT NULL,
-  ingredient_name VARCHAR(255) NOT NULL,
+  ingredient_name VARCHAR(255) NOT NULL
 );

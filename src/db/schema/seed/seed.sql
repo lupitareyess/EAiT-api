@@ -287,7 +287,7 @@ VALUES
 
   -- Category: dairy subcategory: lactose_free
 ('Lactose free milk', 'dairy', 'lactose_free'),
-('Lactose free yogurt', 'dairy', 'lactose_free')
+('Lactose free yogurt', 'dairy', 'lactose_free'),
 ('Soy milk', 'dairy', 'lactose_free'),
 ('Almond milk', 'dairy', 'lactose_free'),
 ('Oat milk', 'dairy', 'lactose_free'),
