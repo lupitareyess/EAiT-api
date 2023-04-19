@@ -250,7 +250,7 @@ const getProteinBeef = async () => {
     }
   };
 
-  const getVegetablesCommonFruits = async () => {
+  const getFruitsCommonFruits = async () => {
     try {
       const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'common_fruits';");
       return result.rows;
@@ -260,7 +260,7 @@ const getProteinBeef = async () => {
     }
   };
 
-  const getVegetablesTropicalFruits = async () => {
+  const getFruitsTropicalFruits = async () => {
     try {
       const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'citrus_tropical';");
       return result.rows;
@@ -395,8 +395,8 @@ module.exports = {
     getVegetablesLegumes,
     getVegetablesCabbages,
     getVegetablesFruitVeggies,
-    getVegetablesCommonFruits,
-    getVegetablesTropicalFruits,
+    getFruitsCommonFruits,
+    getFruitsTropicalFruits,
     getDairyMilkCream,
     getDairyButterYogurts,
     getDairyCheeses,
