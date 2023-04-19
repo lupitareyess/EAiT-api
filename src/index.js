@@ -73,11 +73,13 @@ app.get("/api/test", (req, res) => {
 
 // route to generate recipe using OpenAI
 app.post("/api/recipe", (req, res) => {
-  const { mealType, selectedTools } = req.body;
+  const { mealType, selectedTools , skillLevel} = req.body;
   const ingredients = ['papaya', 'chicken', 'cilantro', 'rice', 'red onion', 'celery', 'seaweed'];
   const serves = 4;
   const measurement = 'imperial';
-  const prompt = `make me a ${mealType} recipe using ${ingredients.join(", ")}, serves ${serves} people, with Cooking time:, and at the end can you give me the calories per serve as well. the measurement is ${measurement} with this tool ${selectedTools}`;
+  const prompt = `make me a ${skillLevel} ${mealType} recipe using ${ingredients.join(", ")}, serves ${serves} people, with Cooking time:, and at the end can you give me the calories per serve as well. the measurement is ${measurement} with this tool ${selectedTools}`;
+
+console.log(prompt);
 
   const params = {
     prompt,
