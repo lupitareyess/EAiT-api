@@ -6,7 +6,7 @@ const app = express();
 const client = require('./db');
 const bodyParser = require('body-parser');
 
-const { getCookingTools } = require('./db.js');
+const { getCookingTools, getAllCategories, getAllSubCategories, getAllIngredients } = require('./db.js');
 
 const port = process.env.PORT || 3001;
 
@@ -71,13 +71,25 @@ app.get("/api/test", (req, res) => {
 });
 
 
+app.get("/api/ingredients", (req, res) => {
+  Promise.all([getAllCategories(), getAllSubCategories(), getAllIngredients()])
+    .then(([categories, subCategories, getAllIngredients]) => {
+      res.json({ categories, subCategories, getAllIngredients });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send("An error occurred");
+    });
+});
+
+
 // route to generate recipe using OpenAI
 app.post("/api/recipe", (req, res) => {
   const { mealType, selectedTools } = req.body;
   const ingredients = ['papaya', 'chicken', 'cilantro', 'rice', 'red onion', 'celery', 'seaweed'];
   const serves = 4;
   const measurement = 'imperial';
-  const prompt = `make me a ${mealType} recipe using ${ingredients.join(", ")}, serves ${serves} people, with Cooking time:, and at the end can you give me the calories per serve as well. the measurement is ${measurement} with this tool ${selectedTools}`;
+  const prompt = `make me a ${mealType} recipe using ${ingredients.join(", ")}, serves ${serves} people, with Cooking time:, and at the end can you give me the calories per serve as well. the measurement is ${measurement} with one of these tools ${selectedTools}`;
 
   const params = {
     prompt,
