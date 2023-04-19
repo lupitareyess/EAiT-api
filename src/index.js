@@ -4,6 +4,8 @@ const morgan = require('morgan');
 const axios = require("axios");
 const app = express();
 const client = require('./db');
+const bodyParser = require('body-parser');
+
 
 const { getCookingTools } = require('./db.js');
 
@@ -13,6 +15,7 @@ const path = require('path');
 app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.static('public'));
+app.use(bodyParser.json());
 require('dotenv').config();
 
 const apiKey = process.env.OPENAI_API_KEY;
@@ -38,18 +41,25 @@ const googleImagesClient = axios.create({
   },
 });
 
-app.get("/api/recipe", (req, res) => {
-  const ingredients = ['papaya', 'chicken', 'cilantro', 'rice', 'red onion', 'celery', 'halibut'];
-  const serves = 4;
-  const measurement = 'imperial';
-  const prompt = `make me a recipe using ${ingredients.join(", ")}, serves ${serves} people, with Cooking time:, and at the end can you give me the calories per serve as well. the measurement is ${measurement}`;
+class Recipe {
+  constructor(name, ingredients, instructions, cookingTime, calories, image) {
+    this.name = name;
+    this.ingredients = ingredients;
+    this.instructions = instructions;
+    this.cookingTime = cookingTime;
+    this.calories = calories;
+    this.image = image;
+  }
+}
 
-  const params = {
-    prompt,
-    model: "text-davinci-003",
-    max_tokens: 500,
-    temperature: 0,
-  };
+  // declare an empty recipe object
+  let recipe = {};
+
+  // route to send recipe to front end
+  app.get("/api/recipe", (req, res) => {
+    res.json(recipe);
+  });
+
 
   app.get("/api/test", (req, res) => {
     getCookingTools()
@@ -62,6 +72,24 @@ app.get("/api/recipe", (req, res) => {
       });
   });
 
+
+// route to generate recipe using OpenAI
+app.post("/api/recipe", (req, res) => {
+  const {mealType} = req.body;
+  const ingredients = ['papaya', 'chicken', 'cilantro', 'rice', 'red onion', 'celery', 'halibut'];
+  const serves = 4;
+  const measurement = 'imperial';
+  const prompt = `make me a ${mealType} recipe using ${ingredients.join(", ")}, serves ${serves} people, with Cooking time:, and at the end can you give me the calories per serve as well. the measurement is ${measurement}`;
+
+  const params = {
+    prompt,
+    model: "text-davinci-003",
+    max_tokens: 500,
+    temperature: 0,
+  };
+
+
+  // data scrubber to ensure the recipe display is clean and consistent.
   openaiClient
     .post("https://api.openai.com/v1/completions", params)
     .then((result) => {
@@ -75,13 +103,12 @@ app.get("/api/recipe", (req, res) => {
       const recipeIngredients = recipeLines
         .slice(ingredientsStartIndex + 1, instructionsStartIndex)
         .filter((line) => line.trim().length > 0)
-        .map((ingredient) => ingredient.substring(2));;
+        .map((ingredient) => ingredient.substring(2));
       const recipeInstructions = recipeLines
         .slice(instructionsStartIndex + 1, caloriesStartIndex)
         .filter((line) => line.trim().length > 0);
       const cookingTime = cookingTimeStartIndex >= 0 ? recipeLines[cookingTimeStartIndex].replace("Cooking Time: ", "") : "";
       const caloriesPerServe = recipeLines[caloriesStartIndex].replace("Calories per serve: ", "");
-
 
       const googleImagesParams = {
         q: recipeName + " meal food",
@@ -92,7 +119,7 @@ app.get("/api/recipe", (req, res) => {
         .get("", { params: googleImagesParams })
         .then((googleImagesResult) => {
           const recipeImage = googleImagesResult.data.items[0].link;
-          const recipe = {
+          recipe = {
             name: recipeName,
             ingredients: recipeIngredients,
             instructions: recipeInstructions,
@@ -102,7 +129,6 @@ app.get("/api/recipe", (req, res) => {
           };
           res.json(recipe);
         })
-
         .catch((err) => {
           console.log(err);
           res.status(500).send("An error occurred");
@@ -112,8 +138,8 @@ app.get("/api/recipe", (req, res) => {
       console.log(err);
       res.status(500).send("An error occurred");
     });
-});
-
+  });
+  
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
