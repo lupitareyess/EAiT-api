@@ -99,7 +99,67 @@ const getUsers = async () => {
       return [];
     }
   };
+
+  const getAllCategories = async () => {
+    try {
+      const result = await client.query("SELECT DISTINCT category FROM ingredients");
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getAllProteinsSubCategories = async () => {
+    try {
+      const result = await client.query(`SELECT DISTINCT subcategory FROM ingredients WHERE category = 'protein'`);
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getAllVegetablesSubCategories = async () => {
+    try {
+      const result = await client.query(`SELECT DISTINCT subcategory FROM ingredients WHERE category = 'vegetables'`);
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
   
+  const getAllFruitsSubCategories = async () => {
+    try {
+      const result = await client.query(`SELECT DISTINCT subcategory FROM ingredients WHERE category = 'fruits'`);
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getAllDairySubCategories = async () => {
+    try {
+      const result = await client.query(`SELECT DISTINCT subcategory FROM ingredients WHERE category = 'dairy'`);
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  const getAllSpicesSubCategories = async () => {
+    try {
+      const result = await client.query(`SELECT DISTINCT subcategory FROM ingredients WHERE category = 'spice_and_condiments'`);
+      return result.rows;
+    } catch (error) {
+      console.error(err);
+      return [];
+    }
+  };
+
   const getProteinPoultry = async () => {
     try {
       const result = await client.query("SELECT * FROM ingredients WHERE subcategory = 'poultry';");
@@ -313,6 +373,12 @@ const getProteinBeef = async () => {
 module.exports = {
     getUsers,
     getCookingTools,
+    getAllCategories,
+    getAllProteinsSubCategories,
+    getAllVegetablesSubCategories,
+    getAllFruitsSubCategories,
+    getAllDairySubCategories,
+    getAllSpicesSubCategories,
     getAllIngredients,
     getAllProteins,
     getAllVegetables,

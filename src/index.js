@@ -82,7 +82,6 @@ app.get("/api/recipe", (req, res) => {
       const cookingTime = cookingTimeStartIndex >= 0 ? recipeLines[cookingTimeStartIndex].replace("Cooking Time: ", "") : "";
       const caloriesPerServe = recipeLines[caloriesStartIndex].replace("Calories per serve: ", "");
 
-      console.log(recipeLines);
 
       const googleImagesParams = {
         q: recipeName + " meal food",

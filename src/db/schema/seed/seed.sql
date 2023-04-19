@@ -142,7 +142,7 @@ VALUES
 ('Soybeans', 'vegetables', 'legumes'),
 ('Edamame', 'vegetables', 'legumes'),
  
-  --  Category: protein Subcategory: cabbages
+  --  Category: vegetables Subcategory: cabbages
 ('Broccoli', 'vegetables', 'cabbages'),
 ('Cauliflower', 'vegetables', 'cabbages'),
 ('Cabbage', 'vegetables', 'cabbages'),
