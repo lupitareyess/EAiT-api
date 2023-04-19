@@ -6,7 +6,6 @@ const app = express();
 const client = require('./db');
 const bodyParser = require('body-parser');
 
-
 const { getCookingTools } = require('./db.js');
 
 const port = process.env.PORT || 3001;
@@ -60,7 +59,6 @@ class Recipe {
     res.json(recipe);
   });
 
-
   app.get("/api/test", (req, res) => {
     getCookingTools()
       .then((getCookingTools) => {
@@ -76,7 +74,7 @@ class Recipe {
 // route to generate recipe using OpenAI
 app.post("/api/recipe", (req, res) => {
   const {mealType} = req.body;
-  const ingredients = ['papaya', 'chicken', 'cilantro', 'rice', 'red onion', 'celery', 'halibut'];
+  const ingredients = ['papaya', 'chicken', 'cilantro', 'rice', 'red onion', 'celery', 'seaweed'];
   const serves = 4;
   const measurement = 'imperial';
   const prompt = `make me a ${mealType} recipe using ${ingredients.join(", ")}, serves ${serves} people, with Cooking time:, and at the end can you give me the calories per serve as well. the measurement is ${measurement}`;
@@ -87,7 +85,6 @@ app.post("/api/recipe", (req, res) => {
     max_tokens: 500,
     temperature: 0,
   };
-
 
   // data scrubber to ensure the recipe display is clean and consistent.
   openaiClient
