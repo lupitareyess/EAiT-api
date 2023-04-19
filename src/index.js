@@ -51,33 +51,33 @@ class Recipe {
   }
 }
 
-  // declare an empty recipe object
-  let recipe = {};
+// declare an empty recipe object
+let recipe = {};
+let tools;
+// route to send recipe to front end
+app.get("/api/recipe", (req, res) => {
+  res.json(recipe);
+});
 
-  // route to send recipe to front end
-  app.get("/api/recipe", (req, res) => {
-    res.json(recipe);
-  });
-
-  app.get("/api/test", (req, res) => {
-    getCookingTools()
-      .then((getCookingTools) => {
-        res.json(getCookingTools);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send("An error occurred");
-      });
-  });
+app.get("/api/test", (req, res) => {
+  getCookingTools()
+    .then((getCookingTools) => {
+      res.json(getCookingTools);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send("An error occurred");
+    });
+});
 
 
 // route to generate recipe using OpenAI
 app.post("/api/recipe", (req, res) => {
-  const {mealType} = req.body;
+  const { mealType, selectedTools } = req.body;
   const ingredients = ['papaya', 'chicken', 'cilantro', 'rice', 'red onion', 'celery', 'seaweed'];
   const serves = 4;
   const measurement = 'imperial';
-  const prompt = `make me a ${mealType} recipe using ${ingredients.join(", ")}, serves ${serves} people, with Cooking time:, and at the end can you give me the calories per serve as well. the measurement is ${measurement}`;
+  const prompt = `make me a ${mealType} recipe using ${ingredients.join(", ")}, serves ${serves} people, with Cooking time:, and at the end can you give me the calories per serve as well. the measurement is ${measurement} with this tool ${selectedTools}`;
 
   const params = {
     prompt,
@@ -135,8 +135,8 @@ app.post("/api/recipe", (req, res) => {
       console.log(err);
       res.status(500).send("An error occurred");
     });
-  });
-  
+});
+
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
