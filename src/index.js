@@ -18,8 +18,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 require('dotenv').config();
 
-const port = process.env.PORT || 3001;
-
 const apiKey = process.env.OPENAI_API_KEY;
 const googleCustomSearchKey = process.env.GOOGLE_CUSTOM_SEARCH_KEY;
 const googleCustomSearchEngineId = process.env.GOOGLE_CUSTOM_SEARCH_ENGINE_ID;
