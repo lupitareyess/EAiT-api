@@ -52,8 +52,7 @@ class Recipe {
   }
 }
 
-// declare an empty recipe object
-let recipe = {};
+
 // route to send recipe to front end
 app.get("/api/recipe", (req, res) => {
   res.json(recipe);
@@ -86,7 +85,7 @@ app.get("/api/ingredients", (req, res) => {
 // route to generate recipe using OpenAI
 app.post("/api/recipe", (req, res) => {
 
-  const { mealType, selectedTools, skillLevel, cookingTime, measurementSelection} = req.body;
+  const { mealType, selectedTools, skillLevel, cookingTime, measurementSelection } = req.body;
 
   console.log("Received data:", req.body);
 
@@ -94,7 +93,7 @@ app.post("/api/recipe", (req, res) => {
   const serves = 4;
   const prompt = `Can you recommend a ${skillLevel} ${mealType} recipe using ${ingredients.join(", ")} that serves ${serves} people, takes around ${cookingTime} minutes to cook, and provides the calorie count per serving? Please use ${measurementSelection} units for the ingredients and consider the following tools: ${selectedTools.join(", ")}.`;
 
-console.log('OPENAI prompt', prompt);
+  console.log('OPENAI prompt', prompt);
 
   const params = {
     prompt,
@@ -121,8 +120,8 @@ console.log('OPENAI prompt', prompt);
       const recipeInstructions = recipeLines
         .slice(instructionsStartIndex + 1, caloriesStartIndex)
         .filter((line) => line.trim().length > 0);
-        const cookingTime = cookingTimeStartIndex >= 0 ? recipeLines[cookingTimeStartIndex].replace("Cooking Time: ", "") : "Not specified";
-        const caloriesPerServe = caloriesStartIndex >= 0 ? recipeLines[caloriesStartIndex].replace("Calories per serve: ", "") : "Not specified";        
+      const cookingTime = cookingTimeStartIndex >= 0 ? recipeLines[cookingTimeStartIndex].replace("Cooking Time: ", "") : "Not specified";
+      const caloriesPerServe = caloriesStartIndex >= 0 ? recipeLines[caloriesStartIndex].replace("Calories per serve: ", "") : "Not specified";
 
       const googleImagesParams = {
         q: recipeName + " meal food",
@@ -133,7 +132,7 @@ console.log('OPENAI prompt', prompt);
         .get("", { params: googleImagesParams })
         .then((googleImagesResult) => {
           const recipeImage = googleImagesResult.data.items[0].link;
-          recipe = {
+          const recipe = {
             name: recipeName,
             ingredients: recipeIngredients,
             instructions: recipeInstructions,
@@ -141,6 +140,7 @@ console.log('OPENAI prompt', prompt);
             calories: caloriesPerServe,
             image: recipeImage,
           };
+          // recipeQuery.save
           res.json(recipe);
         })
         .catch((err) => {
@@ -154,7 +154,7 @@ console.log('OPENAI prompt', prompt);
     });
 });
 
+app.use(express.static(path.join(__dirname, 'client', 'build')));
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
-app.use(express.static(path.join(__dirname, 'client', 'build')));
