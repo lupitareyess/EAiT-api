@@ -6,7 +6,7 @@ const app = express();
 const client = require('./db');
 const bodyParser = require('body-parser');
 
-const { getCookingTools, getAllCategories, getAllSubCategories, getAllIngredients } = require('./db.js');
+const { getCookingTools, getAllCategories, getAllSubCategories, getAllIngredients, getAllProteins, getAllVegetables, getProteinBeef, getProteinPoultry } = require('./db.js');
 
 const port = process.env.PORT || 3001;
 
@@ -71,7 +71,7 @@ app.get("/api/test", (req, res) => {
 
 
 app.get("/api/ingredients", (req, res) => {
-  Promise.all([getAllCategories(), getAllSubCategories(), getAllIngredients()])
+  Promise.all([getAllIngredients()])
     .then(([categories, subCategories, getAllIngredients]) => {
       res.json({ categories, subCategories, getAllIngredients });
     })
