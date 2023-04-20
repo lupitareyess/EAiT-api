@@ -14,8 +14,11 @@ const path = require('path');
 app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.static('public'));
+app.use(express.json());
 app.use(bodyParser.json());
 require('dotenv').config();
+
+const port = process.env.PORT || 3001;
 
 const apiKey = process.env.OPENAI_API_KEY;
 const googleCustomSearchKey = process.env.GOOGLE_CUSTOM_SEARCH_KEY;
@@ -53,7 +56,6 @@ class Recipe {
 
 // declare an empty recipe object
 let recipe = {};
-let tools;
 // route to send recipe to front end
 app.get("/api/recipe", (req, res) => {
   res.json(recipe);
@@ -85,12 +87,16 @@ app.get("/api/ingredients", (req, res) => {
 
 // route to generate recipe using OpenAI
 app.post("/api/recipe", (req, res) => {
-  const { mealType, selectedTools, skillLevel } = req.body;
-  const ingredients = ['papaya', 'chicken', 'cilantro', 'rice', 'red onion', 'celery', 'seaweed'];
-  const serves = 4;
-  const measurement = 'imperial';
-  const prompt = `make me a ${mealType} recipe using ${ingredients.join(", ")}, serves ${serves} people, with Cooking time:, and at the end can you give me the calories per serve as well. the measurement is ${measurement} with one of these tools ${selectedTools}`;
 
+  const { mealType, selectedTools, skillLevel, cookingTime, measurementSelection} = req.body;
+
+  console.log("Received data:", req.body);
+
+  const ingredients = ['beef', 'carrots', 'cilantro', 'potatos', 'red onion', 'onions'];
+  const serves = 4;
+  const prompt = `Can you recommend a ${skillLevel} ${mealType} recipe using ${ingredients.join(", ")} that serves ${serves} people, takes around ${cookingTime} minutes to cook, and provides the calorie count per serving? Please use ${measurementSelection} units for the ingredients and consider the following tools: ${selectedTools.join(", ")}.`;
+
+console.log('OPENAI prompt', prompt);
 
   const params = {
     prompt,
@@ -117,8 +123,8 @@ app.post("/api/recipe", (req, res) => {
       const recipeInstructions = recipeLines
         .slice(instructionsStartIndex + 1, caloriesStartIndex)
         .filter((line) => line.trim().length > 0);
-      const cookingTime = cookingTimeStartIndex >= 0 ? recipeLines[cookingTimeStartIndex].replace("Cooking Time: ", "") : "";
-      const caloriesPerServe = recipeLines[caloriesStartIndex].replace("Calories per serve: ", "");
+        const cookingTime = cookingTimeStartIndex >= 0 ? recipeLines[cookingTimeStartIndex].replace("Cooking Time: ", "") : "Not specified";
+        const caloriesPerServe = caloriesStartIndex >= 0 ? recipeLines[caloriesStartIndex].replace("Calories per serve: ", "") : "Not specified";        
 
       const googleImagesParams = {
         q: recipeName + " meal food",
