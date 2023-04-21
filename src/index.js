@@ -6,7 +6,7 @@ const app = express();
 const client = require('./db');
 const bodyParser = require('body-parser');
 
-const { getCookingTools, getAllCategories, getAllSubCategories, getAllIngredients, getAllProteins, getAllVegetables, getProteinBeef, getProteinPoultry } = require('./db.js');
+const { getCookingTools, getAllIngredients } = require('./db.js');
 
 const port = process.env.PORT || 3001;
 
@@ -55,9 +55,10 @@ class Recipe {
 
 // route to send recipe to front end
 app.get("/api/recipe", (req, res) => {
-  res.json(recipe);
+  res.json(Recipe);
 });
 
+// route to provide cookingTools to the preferences page
 app.get("/api/test", (req, res) => {
   getCookingTools()
     .then((getCookingTools) => {
@@ -69,7 +70,7 @@ app.get("/api/test", (req, res) => {
     });
 });
 
-
+// route to provide allingredients to the ingredients page
 app.get("/api/ingredients", (req, res) => {
   Promise.all([getAllIngredients()])
     .then(([categories, subCategories, getAllIngredients]) => {
@@ -85,13 +86,15 @@ app.get("/api/ingredients", (req, res) => {
 // route to generate recipe using OpenAI
 app.post("/api/recipe", (req, res) => {
 
-  const { mealType, selectedTools, skillLevel, cookingTime, measurementSelection } = req.body;
+  const { mealType, selectedTools, skillLevel, cookingTime, measurementSelection, gourmetMode, strictMode, allergies } = req.body;
 
   console.log("Received data:", req.body);
 
+  const gourmetModeCondition = gourmetMode ? "I would like the best, tastiest meal recipe possible with some inclusion of ingredients that I did not include. " : "";
+  const strictModeCondition = strictMode ? "I need a recipe that will strictly adhere to the ingredients provided." : "";
   const ingredients = ['beef', 'carrots', 'cilantro', 'potatos', 'red onion', 'onions'];
   const serves = 4;
-  const prompt = `Can you recommend a ${skillLevel} ${mealType} recipe using ${ingredients.join(", ")} that serves ${serves} people, takes around ${cookingTime} minutes to cook, and provides the calorie count per serving? Please use ${measurementSelection} units for the ingredients and consider the following tools: ${selectedTools.join(", ")}.`;
+  const prompt = `Can you recommend a ${skillLevel} ${mealType} recipe using ${ingredients.join(", ")} that serves ${serves} people, takes around ${cookingTime} minutes to cook, and provides the calorie count per serving. ${gourmetModeCondition} ${strictModeCondition} Please use ${measurementSelection} units for the ingredients. Please understand that I have allergies to ${allergies.join(", ")}. I would prefer to use the following tools to cook with: ${selectedTools.join(", ")}.`;
 
   console.log('OPENAI prompt', prompt);
 
