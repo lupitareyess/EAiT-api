@@ -86,7 +86,7 @@ app.get("/api/ingredients", (req, res) => {
 // route to generate recipe using OpenAI
 app.post("/api/recipe", (req, res) => {
 
-  const { mealType, selectedTools, skillLevel, cookingTime, measurementSelection, gourmetMode, strictMode, allergies } = req.body;
+  const { mealType, selectedTools, skillLevel, cookingTime, measurementSelection, gourmetMode, strictMode, selectedAllergies } = req.body;
 
   console.log("Received data:", req.body);
 
@@ -94,7 +94,7 @@ app.post("/api/recipe", (req, res) => {
   const strictModeCondition = strictMode ? "I need a recipe that will strictly adhere to the ingredients provided." : "";
   const ingredients = ['beef', 'carrots', 'cilantro', 'potatos', 'red onion', 'onions'];
   const serves = 4;
-  const prompt = `Can you recommend a ${skillLevel} ${mealType} recipe using ${ingredients.join(", ")} that serves ${serves} people, takes around ${cookingTime} minutes to cook, and provides the calorie count per serving. ${gourmetModeCondition} ${strictModeCondition} Please use ${measurementSelection} units for the ingredients. Please understand that I have allergies to ${allergies.join(", ")}. I would prefer to use the following tools to cook with: ${selectedTools.join(", ")}.`;
+  const prompt = `Can you recommend a ${skillLevel} ${mealType} recipe using ${ingredients.join(", ")} that serves ${serves} people, takes around ${cookingTime} minutes to cook, and provides the calorie count per serving. ${gourmetModeCondition} ${strictModeCondition} Please use ${measurementSelection} units for the ingredients. Please understand that I have allergies to ${selectedAllergies.join(", ")}. I would prefer to use the following tools to cook with: ${selectedTools.join(", ")}.`;
 
   console.log('OPENAI prompt', prompt);
 
