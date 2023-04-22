@@ -84,7 +84,7 @@ app.post("/api/recipe", (req, res) => {
 
   const { mealType, selectedTools, skillLevel, cookingTime, measurementSelection, gourmetMode, strictMode, selectedAllergies, ingredients } = req.body;
 
-  console.log("Received data:", req.body);
+  console.log("Index.js line 87, Received data:", req.body);
 
   const gourmetModeCondition = gourmetMode ? "I would like the best, tastiest meal recipe possible with some inclusion of ingredients that I did not include. " : "";
   const strictModeCondition = strictMode ? "I need a recipe that will strictly adhere to the ingredients provided." : "";
@@ -96,7 +96,7 @@ app.post("/api/recipe", (req, res) => {
   units for the ingredients. Please understand that I have allergies to ${selectedAllergies.join(", ")}. 
   I would prefer to use the following tools to cook with: ${selectedTools.join(", ")}.`;
 
-  console.log('OPENAI prompt', prompt);
+  console.log('index.js line 99 OPENAI prompt', prompt);
 
   const params = {
     prompt,
@@ -109,6 +109,9 @@ app.post("/api/recipe", (req, res) => {
   openaiClient
     .post("https://api.openai.com/v1/completions", params)
     .then((result) => {
+      console.log('Index.js line 112 raw data from OpenAi', result);
+      console.log('index.js line 113 Processed recipeInstructions:', recipeInstructions);
+
       const recipeText = result.data.choices[0].text;
       const recipeLines = recipeText.split("\n").filter((line) => line.trim().length > 0);
       const recipeName = recipeLines.shift();
