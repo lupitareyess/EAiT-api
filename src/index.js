@@ -36,7 +36,7 @@ const googleImagesClient = axios.create({
     key: googleCustomSearchKey,
     cx: googleCustomSearchEngineId,
     searchType: "image",
-    imgSize: "large",
+    imgSize: "xxlarge",
     imgType: "photo",
     imgAspectRatio: "4:3",
     q: "",
@@ -125,21 +125,6 @@ Please format the response as follows and ensure to include cooking time and det
 - Fiber: {Fiber in grams} (if available)
 - Sugars: {Sugars in grams} (if available)
 - Protein: {Protein in grams}`;
-
-
-  /*
-  const gourmetModeCondition = gourmetMode ? "I would like the best, tastiest meal recipe possible with some inclusion of ingredients that I did not include. " : "";
-  const strictModeCondition = strictMode ? "I need a recipe that will strictly adhere to the ingredients provided." : "";
-  // const ingredients = ['beef', 'carrots', 'cilantro', 'potatos', 'red onion', 'onions'];
-  const serves = 4;
-  const prompt = `Can you recommend a ${skillLevel} ${mealType} recipe using ${ingredients.join(", ")} 
-  that serves ${serves} people, takes around ${cookingTime} minutes to cook, and provides the calorie 
-  count per serving. ${gourmetModeCondition} ${strictModeCondition} Please use ${measurementSelection} 
-  units for the ingredients. Please understand that I have allergies to ${selectedAllergies.join(", ")}. 
-  I would prefer to use the following tools to cook with: ${selectedTools.join(", ")}.`;
-  */
-
-
   
   console.log('index.js line 99 OPENAI prompt', prompt);
 
@@ -189,7 +174,7 @@ Please format the response as follows and ensure to include cooking time and det
         const caloriesPerServe = caloriesStartIndex >= 0 ? recipeLines[caloriesStartIndex].replace(/\*Calories per serve:\* /, "") : "Not specified";
 
       const googleImagesParams = {
-        q: recipeName + " meal food",
+        q: recipeName + " recipe meal food high resolution",
         num: 1,
       };
 
@@ -197,6 +182,7 @@ Please format the response as follows and ensure to include cooking time and det
         .get("", { params: googleImagesParams })
         .then((googleImagesResult) => {
           const recipeImage = googleImagesResult.data.items[0].link;
+          
           const recipe = {
             name: recipeName,
             ingredients: recipeIngredients,
