@@ -110,8 +110,14 @@ app.post("/api/recipe", (req, res) => {
     .post("https://api.openai.com/v1/completions", params)
     .then((result) => {
       console.log('Index.js line 112 raw data from OpenAi', result);
-      console.log('index.js line 113 Processed recipeInstructions:', recipeInstructions);
-
+  
+      //tester code
+/*
+      const recipeTestInstructions = recipeLines
+  .slice(instructionsStartIndex + 1, caloriesStartIndex)
+  .filter((line) => line.trim().length > 0);
+      console.log('index.js line 113 Processed recipeInstructions:', recipeTestInstructions);
+*/
       const recipeText = result.data.choices[0].text;
       const recipeLines = recipeText.split("\n").filter((line) => line.trim().length > 0);
       const recipeName = recipeLines.shift();
