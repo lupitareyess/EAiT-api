@@ -18,6 +18,8 @@ app.use(express.json());
 app.use(bodyParser.json());
 require('dotenv').config();
 
+let latestRecipe = null;
+
 const apiKey = process.env.OPENAI_API_KEY;
 const googleCustomSearchKey = process.env.GOOGLE_CUSTOM_SEARCH_KEY;
 const googleCustomSearchEngineId = process.env.GOOGLE_CUSTOM_SEARCH_ENGINE_ID;
@@ -41,21 +43,15 @@ const googleImagesClient = axios.create({
   },
 });
 
-class Recipe {
-  constructor(name, ingredients, instructions, cookingTime, calories, image) {
-    this.name = name;
-    this.ingredients = ingredients;
-    this.instructions = instructions;
-    this.cookingTime = cookingTime;
-    this.calories = calories;
-    this.image = image;
-  }
-}
-
 
 // route to send recipe to front end
 app.get("/api/recipe", (req, res) => {
-  res.json(Recipe);
+  if (latestRecipe) {
+    res.json(latestRecipe);
+    console.log(latestRecipe);
+  } else {
+    res.status(404).send("No recipe found");
+  }
 });
 
 // route to provide cookingTools to the preferences page
@@ -86,15 +82,19 @@ app.get("/api/ingredients", (req, res) => {
 // route to generate recipe using OpenAI
 app.post("/api/recipe", (req, res) => {
 
-  const { mealType, selectedTools, skillLevel, cookingTime, measurementSelection, gourmetMode, strictMode, selectedAllergies } = req.body;
+  const { mealType, selectedTools, skillLevel, cookingTime, measurementSelection, gourmetMode, strictMode, selectedAllergies, ingredients } = req.body;
 
   console.log("Received data:", req.body);
 
   const gourmetModeCondition = gourmetMode ? "I would like the best, tastiest meal recipe possible with some inclusion of ingredients that I did not include. " : "";
   const strictModeCondition = strictMode ? "I need a recipe that will strictly adhere to the ingredients provided." : "";
-  const ingredients = ['beef', 'carrots', 'cilantro', 'potatos', 'red onion', 'onions'];
+  // const ingredients = ['beef', 'carrots', 'cilantro', 'potatos', 'red onion', 'onions'];
   const serves = 4;
-  const prompt = `Can you recommend a ${skillLevel} ${mealType} recipe using ${ingredients.join(", ")} that serves ${serves} people, takes around ${cookingTime} minutes to cook, and provides the calorie count per serving. ${gourmetModeCondition} ${strictModeCondition} Please use ${measurementSelection} units for the ingredients. Please understand that I have allergies to ${selectedAllergies.join(", ")}. I would prefer to use the following tools to cook with: ${selectedTools.join(", ")}.`;
+  const prompt = `Can you recommend a ${skillLevel} ${mealType} recipe using ${ingredients.join(", ")} 
+  that serves ${serves} people, takes around ${cookingTime} minutes to cook, and provides the calorie 
+  count per serving. ${gourmetModeCondition} ${strictModeCondition} Please use ${measurementSelection} 
+  units for the ingredients. Please understand that I have allergies to ${selectedAllergies.join(", ")}. 
+  I would prefer to use the following tools to cook with: ${selectedTools.join(", ")}.`;
 
   console.log('OPENAI prompt', prompt);
 
@@ -143,7 +143,8 @@ app.post("/api/recipe", (req, res) => {
             calories: caloriesPerServe,
             image: recipeImage,
           };
-          // recipeQuery.save
+
+          latestRecipe = recipe;
           res.json(recipe);
         })
         .catch((err) => {
