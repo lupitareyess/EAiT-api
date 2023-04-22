@@ -179,7 +179,13 @@ Please format the response as follows and ensure to include cooking time and det
         .slice(nutritionStartIndex + 1, nutritionStartIndex + 1 + 4)
         .filter((line) => line.trim().length > 0)
         .map((nutrition) => nutrition.startsWith("- ") ? nutrition.substring(2) : nutrition.trim());
-        const cookingTime = cookingTimeStartIndex >= 0 ? recipeLines[cookingTimeStartIndex].replace(/\*Cooking Time:\* /, "") : "Not specified";
+        const cookingTime = cookingTimeStartIndex >= 0 
+        ? (recipeLines[cookingTimeStartIndex].includes("*Cooking Time:*")
+            ? recipeLines[cookingTimeStartIndex].replace("Cooking Time:", "")
+            : (recipeLines[cookingTimeStartIndex].includes("Cooking Time:")
+                ? recipeLines[cookingTimeStartIndex].replace("Cooking Time:", "")
+                : recipeLines[cookingTimeStartIndex]))
+        : "Not specified";        
         const caloriesPerServe = caloriesStartIndex >= 0 ? recipeLines[caloriesStartIndex].replace(/\*Calories per serve:\* /, "") : "Not specified";
 
       const googleImagesParams = {
