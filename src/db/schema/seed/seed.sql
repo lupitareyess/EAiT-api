@@ -2,7 +2,7 @@ INSERT INTO users (first_name, last_name, email, user_password)
 VALUES ('John', 'Doe', 'test@test.com', '123');
 
 INSERT INTO cooking_tools (tool_name)
-VALUES ('Slow Cooker'), ('BBQ'), ('Smoker'), ('Pressure Cooker'), ('Stove Top'), ('Wok'), ('Rice cooker'), ('Sous vide'), ('Oven');
+VALUES ('Slow Cooker'), ('BBQ'), ('Smoker'), ('Pressure Cooker'), ('Stove Top'), ('Wok'), ('Griddle'), ('Sous vide'), ('Oven');
 
 
 INSERT INTO ingredients (ingredient_name, category, subcategory)
@@ -22,6 +22,7 @@ VALUES
 ('Chicken nuggets', 'protein', 'poultry'),
 ('Chicken sausage', 'protein', 'poultry'),
 ('Chicken liver', 'protein', 'poultry'),
+('Chicken eggs', 'protein', 'poultry'),
 
 -- protein beef
 ('Beef steak', 'protein', 'beef'),
@@ -105,6 +106,7 @@ VALUES
 ('Peas', 'protein', 'vegetarian'),
 ('Green beans', 'protein', 'vegetarian'),
 ('Tofu', 'protein', 'vegetarian'),
+('Chicken eggs', 'protein', 'vegetarian'),
 
 -- Category: vegetables subcategory: roots_and_bulbs
 ('Bell pepper', 'vegetables', 'roots_and_bulbs'),
