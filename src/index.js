@@ -86,6 +86,48 @@ app.post("/api/recipe", (req, res) => {
 
   console.log("Index.js line 87, Received data:", req.body);
 
+  const gourmetModeCondition = gourmetMode ? "Include some additional ingredients for a tastier meal. " : "";
+  const strictModeCondition = strictMode ? "Strictly use the provided ingredients. " : "";
+  const serves = 4;
+
+  const prompt = 
+`Please provide a ${skillLevel} ${mealType} recipe that meets the following criteria:
+- Serves: ${serves} people
+- Cooking time: around ${cookingTime} minutes (mandatory)
+- Ingredients: ${ingredients.join(", ")}
+- Measurement units: ${measurementSelection}
+- Allergies: ${selectedAllergies.join(", ")}
+- Tools: ${selectedTools.join(", ")}
+
+${gourmetModeCondition}${strictModeCondition}
+
+Please format the response as follows and ensure to include cooking time and detailed nutrition information per serve:
+
+*Recipe Name:* {Recipe Name}
+*Ingredients:*
+{Ingredient 1}
+{Ingredient 2}
+...
+*Instructions:*
+{Step 1}
+{Step 2}
+...
+*Calories per serve:* {Calories}
+*Cooking Time:* {Cooking Time}
+*Nutrition Information (per serving):*
+- Calories: {Calories}
+- Fat: {Fat in grams}
+- Saturated Fat: {Saturated Fat in grams} (if available)
+- Trans Fat: {Trans Fat in grams} (if available)
+- Cholesterol: {Cholesterol in milligrams} (if available)
+- Sodium: {Sodium in milligrams} (if available)
+- Carbohydrates: {Carbohydrates in grams}
+- Fiber: {Fiber in grams} (if available)
+- Sugars: {Sugars in grams} (if available)
+- Protein: {Protein in grams}`;
+
+
+  /*
   const gourmetModeCondition = gourmetMode ? "I would like the best, tastiest meal recipe possible with some inclusion of ingredients that I did not include. " : "";
   const strictModeCondition = strictMode ? "I need a recipe that will strictly adhere to the ingredients provided." : "";
   // const ingredients = ['beef', 'carrots', 'cilantro', 'potatos', 'red onion', 'onions'];
@@ -95,14 +137,17 @@ app.post("/api/recipe", (req, res) => {
   count per serving. ${gourmetModeCondition} ${strictModeCondition} Please use ${measurementSelection} 
   units for the ingredients. Please understand that I have allergies to ${selectedAllergies.join(", ")}. 
   I would prefer to use the following tools to cook with: ${selectedTools.join(", ")}.`;
+  */
 
+
+  
   console.log('index.js line 99 OPENAI prompt', prompt);
 
   const params = {
     prompt,
     model: "text-davinci-003",
-    max_tokens: 500,
-    temperature: 0,
+    max_tokens: 700,
+    temperature: 0.4,
   };
 
   // data scrubber to ensure the recipe display is clean and consistent.
@@ -117,20 +162,25 @@ app.post("/api/recipe", (req, res) => {
       console.log('Index.js line 117 Raw recipe data:', recipeText); // Added line to print raw recipe data
 
       const recipeLines = recipeText.split("\n").filter((line) => line.trim().length > 0);
-      const recipeName = recipeLines.shift();
+      const recipeName = recipeLines.shift().replace(/\*Recipe Name:\* /, "");
       const ingredientsStartIndex = recipeLines.findIndex((line) => line.includes("Ingredients:"));
       const instructionsStartIndex = recipeLines.findIndex((line) => line.includes("Instructions:"));
       const caloriesStartIndex = recipeLines.findIndex((line) => line.includes("Calories per serve:"));
       const cookingTimeStartIndex = recipeLines.findIndex((line) => line.includes("Cooking Time:"));
+      const nutritionStartIndex = recipeLines.findIndex((line) => line.includes("Nutrition Information (per serving):"));
       const recipeIngredients = recipeLines
         .slice(ingredientsStartIndex + 1, instructionsStartIndex)
         .filter((line) => line.trim().length > 0)
-        .map((ingredient) => ingredient.substring(2));
+        .map((ingredient) => ingredient.startsWith("- ") ? ingredient.substring(2) : ingredient);
       const recipeInstructions = recipeLines
         .slice(instructionsStartIndex + 1, caloriesStartIndex)
         .filter((line) => line.trim().length > 0);
-      const cookingTime = cookingTimeStartIndex >= 0 ? recipeLines[cookingTimeStartIndex].replace("Cooking Time: ", "") : "Not specified";
-      const caloriesPerServe = caloriesStartIndex >= 0 ? recipeLines[caloriesStartIndex].replace("Calories per serve: ", "") : "Not specified";
+      const recipeNutrition = recipeLines
+        .slice(nutritionStartIndex + 1, nutritionStartIndex + 1 + 4)
+        .filter((line) => line.trim().length > 0)
+        .map((nutrition) => nutrition.startsWith("- ") ? nutrition.substring(2) : nutrition.trim());
+        const cookingTime = cookingTimeStartIndex >= 0 ? recipeLines[cookingTimeStartIndex].replace(/\*Cooking Time:\* /, "") : "Not specified";
+        const caloriesPerServe = caloriesStartIndex >= 0 ? recipeLines[caloriesStartIndex].replace(/\*Calories per serve:\* /, "") : "Not specified";
 
       const googleImagesParams = {
         q: recipeName + " meal food",
@@ -147,6 +197,7 @@ app.post("/api/recipe", (req, res) => {
             instructions: recipeInstructions,
             cookingTime: cookingTime,
             calories: caloriesPerServe,
+            nutrition: recipeNutrition,
             image: recipeImage,
           };
 
