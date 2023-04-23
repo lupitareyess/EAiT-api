@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 require('dotenv').config();
 
-let latestRecipe = null;
+const recipeStore = {};
 
 const apiKey = process.env.OPENAI_API_KEY;
 const googleCustomSearchKey = process.env.GOOGLE_CUSTOM_SEARCH_KEY;
@@ -36,21 +36,23 @@ const googleImagesClient = axios.create({
     key: googleCustomSearchKey,
     cx: googleCustomSearchEngineId,
     searchType: "image",
-    imgSize: "xxlarge",
+    imgSize: "large",
     imgType: "photo",
     imgAspectRatio: "4:3",
     q: "",
   },
 });
 
-
 // route to send recipe to front end
 app.get("/api/recipe", (req, res) => {
-  if (latestRecipe) {
-    res.json(latestRecipe);
-    console.log(latestRecipe);
+  const recipeValues = Object.values(recipeStore);
+
+  if (recipeValues.length >= 2) {
+    const lastTwoRecipes = recipeValues.slice(-2);
+    res.json(lastTwoRecipes);
+    console.log(lastTwoRecipes);
   } else {
-    res.status(404).send("No recipe found");
+    res.status(404).send("No recipes found");
   }
 });
 
@@ -78,13 +80,12 @@ app.get("/api/ingredients", (req, res) => {
     });
 });
 
-
 // route to generate recipe using OpenAI
 app.post("/api/recipe", (req, res) => {
 
   const { mealType, selectedTools, skillLevel, cookingTime, measurementSelection, gourmetMode, strictMode, selectedAllergies, ingredients } = req.body;
 
-  console.log("Index.js line 87, Received data:", req.body);
+  console.log("Index.js line 90, Received data:", req.body);
 
   const gourmetModeCondition = gourmetMode ? "Include some additional ingredients for a tastier meal. " : "";
   const strictModeCondition = strictMode ? "Strictly use the provided ingredients. " : "";
@@ -117,34 +118,78 @@ Please format the response as follows and ensure to include cooking time and det
 *Nutrition Information (per serving):*
 - Calories: {Calories}
 - Fat: {Fat in grams}
-- Saturated Fat: {Saturated Fat in grams} (if available)
-- Trans Fat: {Trans Fat in grams} (if available)
-- Cholesterol: {Cholesterol in milligrams} (if available)
-- Sodium: {Sodium in milligrams} (if available)
+- Saturated Fat: {Saturated Fat in grams} 
+- Trans Fat: {Trans Fat in grams} 
+- Cholesterol: {Cholesterol in milligrams} 
+- Sodium: {Sodium in milligrams} 
 - Carbohydrates: {Carbohydrates in grams}
-- Fiber: {Fiber in grams} (if available)
-- Sugars: {Sugars in grams} (if available)
+- Fiber: {Fiber in grams} 
+- Sugars: {Sugars in grams} 
 - Protein: {Protein in grams}`;
   
-  console.log('index.js line 99 OPENAI prompt', prompt);
+  console.log('index.js line 132 OPENAI prompt', prompt);
 
   const params = {
     prompt,
     model: "text-davinci-003",
-    max_tokens: 700,
-    temperature: 0.4,
+    max_tokens: 800,
+    temperature: 0,
+  };
+
+  const params2 = {
+    prompt: `Please provide a COMPLETELY different recipe from the first requested recipe. It should be an ${skillLevel} ${mealType} recipe that meets the following criteria:
+    - Serves: ${serves} people
+    - Cooking time: around ${cookingTime} minutes (mandatory)
+    - Ingredients: ${ingredients.join(", ")}
+    - Measurement units: ${measurementSelection}
+    - Allergies: ${selectedAllergies.join(", ")}
+    - Tools: ${selectedTools.join(", ")}
+    
+    ${gourmetModeCondition}${strictModeCondition}
+    
+    Please format the response as follows and ensure to include cooking time and detailed nutrition information per serve:
+    
+    *Recipe Name:* {Recipe Name}
+    *Ingredients:*
+    {Ingredient 1}
+    {Ingredient 2}
+    ...
+    *Instructions:*
+    {Step 1}
+    {Step 2}
+    ...
+    *Calories per serve:* {Calories}
+    *Cooking Time:* {Cooking Time}
+    *Nutrition Information (per serving):*
+    - Calories: {Calories}
+    - Fat: {Fat in grams}
+    - Saturated Fat: {Saturated Fat in grams}
+    - Trans Fat: {Trans Fat in grams} 
+    - Cholesterol: {Cholesterol in milligrams} 
+    - Sodium: {Sodium in milligrams} 
+    - Carbohydrates: {Carbohydrates in grams}
+    - Fiber: {Fiber in grams} 
+    - Sugars: {Sugars in grams} 
+    - Protein: {Protein in grams}`,
+    model: "text-davinci-003",
+    max_tokens: 800,
+    temperature: 1,
   };
 
   // data scrubber to ensure the recipe display is clean and consistent.
-  openaiClient
-    .post("https://api.openai.com/v1/completions", params)
-    .then((result) => {
-      console.log('Index.js line 112 raw data from OpenAi', result);
-        
+  Promise.all([
+    openaiClient.post("https://api.openai.com/v1/completions", params),
+    openaiClient.post("https://api.openai.com/v1/completions", params2),
+  ])
+    .then(([result1, result2]) => {
+      console.log('Index.js line 187 raw data from OpenAi', result1);
+      console.log('Index.js line 188 raw data from OpenAi', result2);
+  
+      const processApiResponse = (result) => {
       const recipeText = result.data.choices[0].text;
              
       //tester code
-      console.log('Index.js line 117 Raw recipe data:', recipeText); // Added line to print raw recipe data
+      console.log('Index.js line 194 Raw recipe data:', recipeText); // Added line to print raw recipe data
 
       const recipeLines = recipeText.split("\n").filter((line) => line.trim().length > 0);
       const recipeName = recipeLines.shift().replace(/\*Recipe Name:\* /, "");
@@ -172,29 +217,35 @@ Please format the response as follows and ensure to include cooking time and det
                 : recipeLines[cookingTimeStartIndex]))
         : "Not specified";        
         const caloriesPerServe = caloriesStartIndex >= 0 ? recipeLines[caloriesStartIndex].replace(/\*Calories per serve:\* /, "") : "Not specified";
-
-      const googleImagesParams = {
-        q: recipeName + " recipe meal food high resolution",
-        num: 1,
+        
+        return {
+          name: recipeName,
+          ingredients: recipeIngredients,
+          instructions: recipeInstructions,
+          cookingTime: cookingTime,
+          calories: caloriesPerServe,
+          nutrition: recipeNutrition,
+          image: null, // Set the image to null for now; we'll update it later
+        };
       };
 
-      googleImagesClient
-        .get("", { params: googleImagesParams })
-        .then((googleImagesResult) => {
-          const recipeImage = googleImagesResult.data.items[0].link;
-          
-          const recipe = {
-            name: recipeName,
-            ingredients: recipeIngredients,
-            instructions: recipeInstructions,
-            cookingTime: cookingTime,
-            calories: caloriesPerServe,
-            nutrition: recipeNutrition,
-            image: recipeImage,
-          };
+      const recipe1 = processApiResponse(result1, 1);
+      const recipe2 = processApiResponse(result2, 2);
 
-          latestRecipe = recipe;
-          res.json(recipe);
+      return Promise.all([
+        googleImagesClient.get("", { params: { q: recipe1.name + " recipe meal food high resolution", num: 1 } }),
+        googleImagesClient.get("", { params: { q: recipe2.name + " meal food high resolution", num: 1 } }),
+      ]).then(([googleImagesResult1, googleImagesResult2]) => {
+        // Update the image property for both recipes with the image links
+        recipe1.image = googleImagesResult1.data.items[0].link;
+        recipe2.image = googleImagesResult2.data.items[0].link;
+         
+        const recipeId1 = Date.now().toString();
+        const recipeId2 = (Date.now() + 1).toString();
+        recipeStore[recipeId1] = recipe1;
+        recipeStore[recipeId2] = recipe2;
+          
+          res.json([{ id: recipeId1, ...recipe1 }, { id: recipeId2, ...recipe2 }]);
         })
         .catch((err) => {
           console.log(err);
