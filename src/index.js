@@ -234,7 +234,7 @@ Please format the response as follows and ensure to include cooking time and det
 
       return Promise.all([
         googleImagesClient.get("", { params: { q: recipe1.name + " recipe meal food high resolution", num: 1 } }),
-        googleImagesClient.get("", { params: { q: recipe2.name + " recipe meal food high resolution", num: 1 } }),
+        googleImagesClient.get("", { params: { q: recipe2.name + " meal food high resolution", num: 1 } }),
       ]).then(([googleImagesResult1, googleImagesResult2]) => {
         // Update the image property for both recipes with the image links
         recipe1.image = googleImagesResult1.data.items[0].link;
