@@ -520,7 +520,7 @@ VALUES
 ('Cassava root', 'Starch', 'others'),
 ('Plantains', 'Starch', 'others'),
 ('Yam', 'Starch', 'others'),
-('Pumpkin', 'Starch', 'others');
+('Pumpkin', 'Starch', 'others'),
 
   -- Category: alcohol subcategory: beer_spirits_and_wines
 ('Beer', 'alcohol', 'beer_spirits_and_wines'),
