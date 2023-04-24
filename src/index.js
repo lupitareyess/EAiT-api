@@ -1,21 +1,14 @@
-const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
+const app = require('./middlewares');
 const axios = require("axios");
-const app = express();
-const client = require('./db');
-const bodyParser = require('body-parser');
 
 const { getCookingTools, getAllIngredients } = require('./db.js');
 
 const port = process.env.PORT || 3001;
 
-const path = require('path');
-app.use(morgan('tiny'));
-app.use(cors());
-app.use(express.static('public'));
-app.use(express.json());
-app.use(bodyParser.json());
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+
 require('dotenv').config();
 
 const recipeStore = {};
@@ -258,7 +251,3 @@ Please format the response as follows and ensure to include cooking time and det
     });
 });
 
-app.use(express.static(path.join(__dirname, 'client', 'build')));
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
