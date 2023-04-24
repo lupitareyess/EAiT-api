@@ -2,6 +2,7 @@ const app = require('./middlewares');
 const axios = require("axios");
 
 const { getCookingTools, getAllIngredients } = require('./db.js');
+const { processApiResponse } = require('./apiResponseDataScrubber.js');
 
 const port = process.env.PORT || 3001;
 
@@ -169,7 +170,6 @@ Please format the response as follows and ensure to include cooking time and det
     temperature: 1,
   };
 
-  // data scrubber to ensure the recipe display is clean and consistent.
   Promise.all([
     openaiClient.post("https://api.openai.com/v1/completions", params),
     openaiClient.post("https://api.openai.com/v1/completions", params2),
@@ -177,50 +177,6 @@ Please format the response as follows and ensure to include cooking time and det
     .then(([result1, result2]) => {
       console.log('Index.js line 187 raw data from OpenAi', result1);
       console.log('Index.js line 188 raw data from OpenAi', result2);
-  
-      const processApiResponse = (result) => {
-      const recipeText = result.data.choices[0].text;
-             
-      //tester code
-      console.log('Index.js line 194 Raw recipe data:', recipeText); // Added line to print raw recipe data
-
-      const recipeLines = recipeText.split("\n").filter((line) => line.trim().length > 0);
-      const recipeName = recipeLines.shift().replace(/\*Recipe Name:\* /, "");
-      const ingredientsStartIndex = recipeLines.findIndex((line) => line.includes("Ingredients:"));
-      const instructionsStartIndex = recipeLines.findIndex((line) => line.includes("Instructions:"));
-      const caloriesStartIndex = recipeLines.findIndex((line) => line.includes("Calories per serve:"));
-      const cookingTimeStartIndex = recipeLines.findIndex((line) => line.includes("Cooking Time:"));
-      const nutritionStartIndex = recipeLines.findIndex((line) => line.includes("Nutrition Information (per serving):"));
-      const recipeIngredients = recipeLines
-        .slice(ingredientsStartIndex + 1, instructionsStartIndex)
-        .filter((line) => line.trim().length > 0)
-        .map((ingredient) => ingredient.startsWith("- ") ? ingredient.substring(2) : ingredient);
-      const recipeInstructions = recipeLines
-        .slice(instructionsStartIndex + 1, caloriesStartIndex)
-        .filter((line) => line.trim().length > 0);
-      const recipeNutrition = recipeLines
-        .slice(nutritionStartIndex + 1, nutritionStartIndex + 1 + 4)
-        .filter((line) => line.trim().length > 0)
-        .map((nutrition) => nutrition.startsWith("- ") ? nutrition.substring(2) : nutrition.trim());
-        const cookingTime = cookingTimeStartIndex >= 0 
-        ? (recipeLines[cookingTimeStartIndex].includes("*Cooking Time:*")
-            ? recipeLines[cookingTimeStartIndex].replace("Cooking Time:", "")
-            : (recipeLines[cookingTimeStartIndex].includes("Cooking Time:")
-                ? recipeLines[cookingTimeStartIndex].replace("Cooking Time:", "")
-                : recipeLines[cookingTimeStartIndex]))
-        : "Not specified";        
-        const caloriesPerServe = caloriesStartIndex >= 0 ? recipeLines[caloriesStartIndex].replace(/\*Calories per serve:\* /, "") : "Not specified";
-        
-        return {
-          name: recipeName,
-          ingredients: recipeIngredients,
-          instructions: recipeInstructions,
-          cookingTime: cookingTime,
-          calories: caloriesPerServe,
-          nutrition: recipeNutrition,
-          image: null, // Set the image to null for now; we'll update it later
-        };
-      };
 
       const recipe1 = processApiResponse(result1, 1);
       const recipe2 = processApiResponse(result2, 2);
