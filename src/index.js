@@ -83,20 +83,19 @@ app.get("/api/ingredients", (req, res) => {
 // route to generate recipe using OpenAI
 app.post("/api/recipe", (req, res) => {
 
-  const { mealType, selectedTools, skillLevel, cookingTime, measurementSelection, gourmetMode, strictMode, selectedAllergies, ingredients } = req.body;
+  const { mealType, selectedTools, skillLevel, cookingTime, numberOfServings, gourmetMode, strictMode, selectedAllergies, ingredients } = req.body;
 
   console.log("Index.js line 90, Received data:", req.body);
 
   const gourmetModeCondition = gourmetMode ? "Include some additional ingredients for a tastier meal. " : "";
   const strictModeCondition = strictMode ? "Strictly use the provided ingredients. " : "";
-  const serves = 4;
 
-  const prompt = 
-`Please provide a ${skillLevel} ${mealType} recipe that meets the following criteria:
-- Serves: ${serves} people
+
+  const prompt =
+    `Please provide a ${skillLevel} ${mealType} recipe that meets the following criteria:
+- Serves: ${numberOfServings} people
 - Cooking time: around ${cookingTime} minutes (mandatory)
 - Ingredients: ${ingredients.join(", ")}
-- Measurement units: ${measurementSelection}
 - Allergies: ${selectedAllergies.join(", ")}
 - Tools: ${selectedTools.join(", ")}
 
@@ -126,7 +125,7 @@ Please format the response as follows and ensure to include cooking time and det
 - Fiber: {Fiber in grams} 
 - Sugars: {Sugars in grams} 
 - Protein: {Protein in grams}`;
-  
+
   console.log('index.js line 132 OPENAI prompt', prompt);
 
   const params = {
@@ -138,10 +137,9 @@ Please format the response as follows and ensure to include cooking time and det
 
   const params2 = {
     prompt: `Please provide a different and creative recipe from the first requested recipe. It should be an ${skillLevel} ${mealType} recipe that meets the following criteria:
-    - Serves: ${serves} people
+    - Serves: ${numberOfServings} people
     - Cooking time: around ${cookingTime} minutes (mandatory)
     - Ingredients: ${ingredients.join(", ")}
-    - Measurement units: ${measurementSelection}
     - Allergies: ${selectedAllergies.join(", ")}
     - Tools: ${selectedTools.join(", ")}
     
@@ -184,40 +182,40 @@ Please format the response as follows and ensure to include cooking time and det
     .then(([result1, result2]) => {
       console.log('Index.js line 187 raw data from OpenAi', result1);
       console.log('Index.js line 188 raw data from OpenAi', result2);
-  
-      const processApiResponse = (result) => {
-      const recipeText = result.data.choices[0].text;
-             
-      //tester code
-      console.log('Index.js line 194 Raw recipe data:', recipeText); // Added line to print raw recipe data
 
-      const recipeLines = recipeText.split("\n").filter((line) => line.trim().length > 0);
-      const recipeName = recipeLines.shift().replace(/^\*?Recipe Name:\*? /, "");
-      const ingredientsStartIndex = recipeLines.findIndex((line) => line.includes("Ingredients:"));
-      const instructionsStartIndex = recipeLines.findIndex((line) => line.includes("Instructions:"));
-      const caloriesStartIndex = recipeLines.findIndex((line) => line.includes("Calories per serve:"));
-      const cookingTimeStartIndex = recipeLines.findIndex((line) => line.includes("Cooking Time:"));
-      const nutritionStartIndex = recipeLines.findIndex((line) => line.includes("Nutrition Information (per serving):"));
-      const recipeIngredients = recipeLines
-        .slice(ingredientsStartIndex + 1, instructionsStartIndex)
-        .filter((line) => line.trim().length > 0)
-        .map((ingredient) => ingredient.startsWith("- ") ? ingredient.substring(2) : ingredient);
-      const recipeInstructions = recipeLines
-        .slice(instructionsStartIndex + 1, caloriesStartIndex)
-        .filter((line) => line.trim().length > 0);
-      const recipeNutrition = recipeLines
-        .slice(nutritionStartIndex + 1, nutritionStartIndex + 1 + 4)
-        .filter((line) => line.trim().length > 0)
-        .map((nutrition) => nutrition.startsWith("- ") ? nutrition.substring(2) : nutrition.trim());
-        const cookingTime = cookingTimeStartIndex >= 0 
-        ? (recipeLines[cookingTimeStartIndex].includes("*Cooking Time:*")
+      const processApiResponse = (result) => {
+        const recipeText = result.data.choices[0].text;
+
+        //tester code
+        console.log('Index.js line 194 Raw recipe data:', recipeText); // Added line to print raw recipe data
+
+        const recipeLines = recipeText.split("\n").filter((line) => line.trim().length > 0);
+        const recipeName = recipeLines.shift().replace(/^\*?Recipe Name:\*? /, "");
+        const ingredientsStartIndex = recipeLines.findIndex((line) => line.includes("Ingredients:"));
+        const instructionsStartIndex = recipeLines.findIndex((line) => line.includes("Instructions:"));
+        const caloriesStartIndex = recipeLines.findIndex((line) => line.includes("Calories per serve:"));
+        const cookingTimeStartIndex = recipeLines.findIndex((line) => line.includes("Cooking Time:"));
+        const nutritionStartIndex = recipeLines.findIndex((line) => line.includes("Nutrition Information (per serving):"));
+        const recipeIngredients = recipeLines
+          .slice(ingredientsStartIndex + 1, instructionsStartIndex)
+          .filter((line) => line.trim().length > 0)
+          .map((ingredient) => ingredient.startsWith("- ") ? ingredient.substring(2) : ingredient);
+        const recipeInstructions = recipeLines
+          .slice(instructionsStartIndex + 1, caloriesStartIndex)
+          .filter((line) => line.trim().length > 0);
+        const recipeNutrition = recipeLines
+          .slice(nutritionStartIndex + 1, nutritionStartIndex + 1 + 4)
+          .filter((line) => line.trim().length > 0)
+          .map((nutrition) => nutrition.startsWith("- ") ? nutrition.substring(2) : nutrition.trim());
+        const cookingTime = cookingTimeStartIndex >= 0
+          ? (recipeLines[cookingTimeStartIndex].includes("*Cooking Time:*")
             ? recipeLines[cookingTimeStartIndex].replace("Cooking Time:", "")
             : (recipeLines[cookingTimeStartIndex].includes("Cooking Time:")
-                ? recipeLines[cookingTimeStartIndex].replace("Cooking Time:", "")
-                : recipeLines[cookingTimeStartIndex]))
-        : "Not specified";        
+              ? recipeLines[cookingTimeStartIndex].replace("Cooking Time:", "")
+              : recipeLines[cookingTimeStartIndex]))
+          : "Not specified";
         const caloriesPerServe = caloriesStartIndex >= 0 ? recipeLines[caloriesStartIndex].replace(/\*Calories per serve:\* /, "") : "Not specified";
-        
+
         return {
           name: recipeName,
           ingredients: recipeIngredients,
@@ -239,14 +237,14 @@ Please format the response as follows and ensure to include cooking time and det
         // Update the image property for both recipes with the image links
         recipe1.image = googleImagesResult1.data.items[0].link;
         recipe2.image = googleImagesResult2.data.items[0].link;
-         
+
         const recipeId1 = Date.now().toString();
         const recipeId2 = (Date.now() + 1).toString();
         recipeStore[recipeId1] = recipe1;
         recipeStore[recipeId2] = recipe2;
-          
-          res.json([{ id: recipeId1, ...recipe1 }, { id: recipeId2, ...recipe2 }]);
-        })
+
+        res.json([{ id: recipeId1, ...recipe1 }, { id: recipeId2, ...recipe2 }]);
+      })
         .catch((err) => {
           console.log(err);
           res.status(500).send("An error occurred");
