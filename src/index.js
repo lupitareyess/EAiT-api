@@ -137,7 +137,7 @@ Please format the response as follows and ensure to include cooking time and det
   };
 
   const params2 = {
-    prompt: `Please provide a COMPLETELY different recipe from the first requested recipe. It should be an ${skillLevel} ${mealType} recipe that meets the following criteria:
+    prompt: `Please provide a different and creative recipe from the first requested recipe. It should be an ${skillLevel} ${mealType} recipe that meets the following criteria:
     - Serves: ${serves} people
     - Cooking time: around ${cookingTime} minutes (mandatory)
     - Ingredients: ${ingredients.join(", ")}
@@ -192,7 +192,7 @@ Please format the response as follows and ensure to include cooking time and det
       console.log('Index.js line 194 Raw recipe data:', recipeText); // Added line to print raw recipe data
 
       const recipeLines = recipeText.split("\n").filter((line) => line.trim().length > 0);
-      const recipeName = recipeLines.shift().replace(/\*Recipe Name:\* /, "");
+      const recipeName = recipeLines.shift().replace(/^\*?Recipe Name:\*? /, "");
       const ingredientsStartIndex = recipeLines.findIndex((line) => line.includes("Ingredients:"));
       const instructionsStartIndex = recipeLines.findIndex((line) => line.includes("Instructions:"));
       const caloriesStartIndex = recipeLines.findIndex((line) => line.includes("Calories per serve:"));
