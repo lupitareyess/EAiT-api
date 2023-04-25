@@ -6,7 +6,10 @@ const extractCookingTime = require('./extractCookingTime');
 const extractCaloriesPerServe = require('./extractCaloriesPerServe');
 
 function processApiResponse(result) {
- const recipeText = result.data.choices[0].text;
+ 
+  console.log('raw string api response.js', result);
+
+  const recipeText = result.data.choices[0].text;
 
   const recipeLines = recipeText.split("\n").filter((line) => line.trim().length > 0);
 
@@ -31,6 +34,7 @@ function processApiResponse(result) {
     calories: caloriesPerServe,
     nutrition: recipeNutrition,
     image: null, // Set the image to null for now; we'll update it later
+
   };
 }
 

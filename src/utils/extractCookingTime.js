@@ -1,11 +1,19 @@
 function extractCookingTime(recipeLines, cookingTimeStartIndex) {
-    return cookingTimeStartIndex >= 0
-      ? (recipeLines[cookingTimeStartIndex].includes("*Cooking Time:*")
-        ? recipeLines[cookingTimeStartIndex].replace("Cooking Time:", "")
-        : (recipeLines[cookingTimeStartIndex].includes("Cooking Time:")
-          ? recipeLines[cookingTimeStartIndex].replace("Cooking Time:", "")
-          : recipeLines[cookingTimeStartIndex]))
-      : "Not specified";
+  if (cookingTimeStartIndex < 0 || cookingTimeStartIndex >= recipeLines.length) {
+    // handle invalid input
+    return "Not specified";
   }
 
-  module.exports = extractCookingTime;
+  const cookingTimeLine = recipeLines[cookingTimeStartIndex];
+  const prefixRegex = /^\*\s*Cooking\s+Time\s*:\s*\*\s*/i;
+
+  if (!prefixRegex.test(cookingTimeLine)) {
+    // handle missing or incorrect cooking time prefix
+    return cookingTimeLine.trim();
+  }
+
+  const cookingTime = cookingTimeLine.replace(prefixRegex, "").trim();
+  return cookingTime;
+}
+
+module.exports = extractCookingTime;
