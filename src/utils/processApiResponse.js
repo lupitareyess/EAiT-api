@@ -1,5 +1,12 @@
+const extractRecipeName = require('./extractRecipeName');
+const extractRecipeIngredients = require('./extractRecipeIngredients');
+const extractRecipeInstructions = require('./extractRecipeInstructions');
+const extractRecipeNutrition = require('./extractRecipeNutrition');
+const extractCookingTime = require('./extractCookingTime');
+const extractCaloriesPerServe = require('./extractCaloriesPerServe');
+
 function processApiResponse(result) {
-  const recipeText = result.data.choices[0].text;
+ const recipeText = result.data.choices[0].text;
 
   const recipeLines = recipeText.split("\n").filter((line) => line.trim().length > 0);
 
@@ -15,7 +22,7 @@ function processApiResponse(result) {
   const recipeNutrition = extractRecipeNutrition(recipeLines, nutritionStartIndex);
   const cookingTime = extractCookingTime(recipeLines, cookingTimeStartIndex);
   const caloriesPerServe = extractCaloriesPerServe(recipeLines, caloriesStartIndex);
-
+  
   return {
     name: recipeName,
     ingredients: recipeIngredients,
@@ -27,6 +34,4 @@ function processApiResponse(result) {
   };
 }
 
-module.exports = {
-  processApiResponse,
-};
+module.exports = processApiResponse;

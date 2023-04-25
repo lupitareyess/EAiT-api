@@ -1,6 +1,6 @@
 const express = require("express");
 const { openaiClient, googleImagesClient } = require("../api.js");
-const { processApiResponse } = require("../apiDataScrubber.js");
+const processApiResponse = require('../utils/processApiResponse');
 const { recipePromptOne, recipePromptTwo } = require("../recipePrompts.js");
 
 module.exports = (recipeStore) => {
@@ -9,7 +9,7 @@ module.exports = (recipeStore) => {
   router.post("/api/recipe", (req, res) => {
     const { mealType, selectedTools, skillLevel, cookingTime, numberOfServings, gourmetMode, strictMode, selectedAllergies, ingredients } = req.body;
 
-    console.log("Index.js line 57, Received data:", req.body);
+    console.log("generateRecipe.js line 12, Received data:", req.body);
 
     const gourmetModeCondition = gourmetMode ? "Include some additional ingredients for a tastier meal. " : "";
     const strictModeCondition = strictMode ? "Strictly use the provided ingredients. " : "";
@@ -28,14 +28,15 @@ module.exports = (recipeStore) => {
       temperature: 1,
     };
 
-    // data scrubber to ensure the recipe display is clean and consistent.
+    // google images api
+    
     Promise.all([
       openaiClient.post("https://api.openai.com/v1/completions", params),
       openaiClient.post("https://api.openai.com/v1/completions", params2),
     ])
       .then(([result1, result2]) => {
-        console.log('Index.js line 82 raw data from OpenAi', result1);
-        console.log('Index.js line 83 raw data from OpenAi', result2);
+        console.log('generateRecipe.js line 38 raw data from OpenAi', result1);
+        console.log('generateRecipe.js line 39 raw data from OpenAi', result2);
 
         const recipe1 = processApiResponse(result1, 1);
         const recipe2 = processApiResponse(result2, 2);
