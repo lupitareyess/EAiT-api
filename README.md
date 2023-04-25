@@ -1,6 +1,8 @@
 # EAiT API
 
-This is -----.
+This is the EAiT backend API repository. 
+You can find the front end repository here: https://github.com/mrludovicc/EAiT
+
 
 ## Setup
 
@@ -61,6 +63,9 @@ To run this project, you'll need to install the following dependencies:
 - `react`
 - `react-dom`
 - `react-scripts`
+- `socket.io`
+- `body-parser`
+- `pg`
 
 ## Running the project
 
