@@ -1,7 +1,7 @@
 const express = require("express");
 const { openaiClient, googleImagesClient } = require("../api.js");
 const processApiResponse = require('../utils/processApiResponse');
-const { recipePromptOne, recipePromptTwo } = require("../recipePrompts.js");
+const { recipePromptOne, recipePromptTwo } = require("./recipePrompts.js");
 
 module.exports = (recipeStore) => {
   const router = express.Router();
