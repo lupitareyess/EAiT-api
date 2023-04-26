@@ -18,9 +18,9 @@ const googleImagesClient = axios.create({
     cx: googleCustomSearchEngineId,
     searchType: "image",
     imgSize: "large",
-    imgType: "photo",
-    imgAspectRatio: "4:3",
-    q: "",
+    fileType: "jpg",
+    imgAspectRatio: "4:3"
+    // q: "",
   },
 });
 
