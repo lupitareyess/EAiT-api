@@ -9,7 +9,7 @@ module.exports = (recipeStore) => {
   router.post("/api/recipe", (req, res) => {
     const { mealType, selectedTools, skillLevel, cookingTime, numberOfServings, gourmetMode, strictMode, selectedAllergies, ingredients } = req.body;
 
-    // console.log("generateRecipe.js line 12, Received data:", req.body);
+    console.log("generateRecipe.js line 12, Received data:", req.body);
 
     const gourmetModeCondition = gourmetMode ? "Include some additional ingredients for a tastier meal. " : "";
     const strictModeCondition = strictMode ? "Strictly use the provided ingredients. " : "";
@@ -35,8 +35,8 @@ module.exports = (recipeStore) => {
       openaiClient.post("https://api.openai.com/v1/completions", params2),
     ])
       .then(([result1, result2]) => {
-        // console.log('generateRecipe.js line 38 raw data from OpenAi', result1);
-        // console.log('generateRecipe.js line 39 raw data from OpenAi', result2);
+        console.log('generateRecipe.js line 38 raw data from OpenAi', result1);
+        console.log('generateRecipe.js line 39 raw data from OpenAi', result2);
 
         const recipe1 = processApiResponse(result1, 1);
         const recipe2 = processApiResponse(result2, 2);
@@ -49,7 +49,7 @@ module.exports = (recipeStore) => {
           recipe1.image = googleImagesResult1.data.items[0].link;
           recipe2.image = googleImagesResult2.data.items[0].link;
 
-          // console.log("generateRecipe.js line 52, recipe1 image link::", googleImagesResult1.data.items[0].link);
+          console.log("generateRecipe.js line 52, recipe1 image link::", googleImagesResult1.data.items[0].link);
           // console.log("generateRecipe.js line 32, recipe2 image link:", googleImagesResult1.data.items[1].link);
 
 

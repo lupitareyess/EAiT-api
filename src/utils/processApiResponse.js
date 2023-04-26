@@ -7,9 +7,11 @@ const extractCaloriesPerServe = require('./extractCaloriesPerServe');
 
 function processApiResponse(result) {
 
-  // console.log('raw string api response.js', result);
+  console.log('raw string api response.js line 10', result);
 
   const recipeText = result.data.choices[0].text;
+
+  console.log('raw string api response.js line 14', recipeText);
 
   const recipeLines = recipeText.split("\n").filter((line) => line.trim().length > 0);
 
