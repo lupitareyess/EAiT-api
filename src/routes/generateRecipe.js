@@ -49,8 +49,8 @@ module.exports = (recipeStore) => {
           recipe1.image = googleImagesResult1.data.items[0].link;
           recipe2.image = googleImagesResult2.data.items[0].link;
 
-          console.log("generateRecipe.js line 52, recipe1 image link::", googleImagesResult1.data.items[0].link);
-          console.log("generateRecipe.js line 32, recipe2 image link:", googleImagesResult1.data.items[1].link);
+          // console.log("generateRecipe.js line 52, recipe1 image link::", googleImagesResult1.data.items[0].link);
+          // console.log("generateRecipe.js line 32, recipe2 image link:", googleImagesResult1.data.items[1].link);
 
 
           const recipeId1 = Date.now().toString();
