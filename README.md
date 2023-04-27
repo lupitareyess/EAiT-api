@@ -1,8 +1,26 @@
-# EAiT API
+# EAiT Backend API
 
 This is the EAiT backend API repository. 
-You can find the front end repository here: https://github.com/mrludovicc/EAiT
+You can find the front end repository here: https://github.com/trickstyle89/EAiT-api
 
+EAiT is a cutting-edge app powered by AI that enables users to create meals based on the ingredients they have at hand. Additionally, it provides users with inspiration for dishes using only a few ingredients of their choice. This innovative app has been developed with great passion and meticulous attention to the user interface and experience. It boasts a user-friendly preferences page and a comprehensive ingredients page, which work seamlessly to craft a unique AI-created recipe. 
+
+Let us help you EAiT.
+
+# Screenshots
+
+![Landing and Preferences Page](https://github.com/mrludovicc/EAiT/blob/master/public/firstEAiT.gif)
+
+![Ingredients Page](https://github.com/mrludovicc/EAiT/blob/master/public/secondEAiT.gif)
+
+![Recipes](https://github.com/mrludovicc/EAiT/blob/master/public/EAiT%20Third%20Clip.gif)
+
+## Features
+
+- User Preferences page to help AI craft recipes base on time, skill, tools, etc
+- Well organized and dynamic ingredients page to make select fun and easy
+- Parallel recipe generation. 2 for 1 feature to aid user
+- Many more small but impactful features to aid in preparation of meals.
 
 ## Setup
 
