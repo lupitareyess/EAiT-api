@@ -11,20 +11,20 @@ module.exports = (recipeStore) => {
 
     console.log("generateRecipe.js line 12, Received data:", req.body);
 
-    const gourmetModeCondition = gourmetMode ? "Include some additional ingredients for a tastier meal. " : "";
+    const gourmetModeCondition = gourmetMode ? "Include additional ingredients for a tastier meal. " : "";
     const strictModeCondition = strictMode ? "Strictly use the provided ingredients. " : "";
 
     const params = {
       prompt: recipePromptOne({ skillLevel, selectedTools, mealType, numberOfServings, cookingTime, ingredients, selectedAllergies, gourmetModeCondition, strictModeCondition }),
       model: "text-davinci-003",
-      max_tokens: 800,
+      max_tokens: 750,
       temperature: 0,
     };
 
     const params2 = {
       prompt: recipePromptTwo({ skillLevel, selectedTools, mealType, numberOfServings, cookingTime, ingredients, selectedAllergies, gourmetModeCondition, strictModeCondition }),
       model: "text-davinci-003",
-      max_tokens: 800,
+      max_tokens: 750,
       temperature: 1,
     };
 

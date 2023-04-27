@@ -1,5 +1,5 @@
 function extractRecipeNutrition(recipeLines, nutritionStartIndex) {
-  const MAX_NUTRITION_LINES = 4;
+  const MAX_NUTRITION_LINES = 5;
 
   if (nutritionStartIndex < 0 || nutritionStartIndex >= recipeLines.length) {
     // handle invalid input

@@ -5,7 +5,7 @@ function extractCookingTime(recipeLines, cookingTimeStartIndex) {
   }
 
   const cookingTimeLine = recipeLines[cookingTimeStartIndex];
-  const prefixRegex = /^\*\s*Cooking\s+Time\s*:\s*\*\s*/i;
+  const prefixRegex = /^(\*?\s*Cooking\s+Time\s*:?\s*\*?)|(.*Cooking\s+Time.*)/i;
 
   if (!prefixRegex.test(cookingTimeLine)) {
     // handle missing or incorrect cooking time prefix
@@ -17,3 +17,4 @@ function extractCookingTime(recipeLines, cookingTimeStartIndex) {
 }
 
 module.exports = extractCookingTime;
+
