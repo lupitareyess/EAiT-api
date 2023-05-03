@@ -1,3 +1,5 @@
+// How hard to convert into Typescript?
+
 const axios = require("axios");
 const middleware = require('./middleware');
 const recipeRoutes = require('./routes/recipe');
@@ -7,7 +9,11 @@ const generateRecipeRoutes = require('./routes/generateRecipe');
 
 const port = process.env.PORT || 3001;
 
-const recipeStore = {};
+
+// this is where the connection to the DB needs to be made.
+// perhaps a seperation of concerns here to make the module seperate?
+// A function to import here from the routes?
+const recipeStore = {}; 
 
 function createApp(recipeStore) {
   const app = middleware();
